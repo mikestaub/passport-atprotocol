@@ -1,0 +1,78 @@
+{
+    "name": "passport-atprotocol",
+    "version": "0.1.0",
+    "description": "ATprotocol (OAuth 2.0) authorization strategy for PassportJS",
+    "author": "Mike Staub",
+    "license": "MIT",
+    "source": "src/index.ts",
+    "main": "dist/index.js",
+    "umd:main": "dist/index.umd.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "microbundle --target node",
+        "generate-keys": "node scripts/generate-keys.js",
+        "rotate-keys": "node scripts/rotate-keys.js",
+        "generate-client-assertion": "node scripts/generate-client-assertion.js",
+        "prepublish": "npm run build",
+        "lint": "eslint --fix src/**/*.ts",
+        "test": "jest"
+    },
+    "keywords": [
+        "passport",
+        "atprotocol",
+        "bluesky",
+        "auth",
+        "login",
+        "oauth"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mikestaub/passport-atprotocol.git"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://opensource.org/licenses/MIT"
+        }
+    ],
+    "bugs": {
+        "url": "https://github.com/mikestaub/passport-atprotocol/issues"
+    },
+    "release": {
+        "branch": "main"
+    },
+    "homepage": "https://github.com/mikestaub/passport-atprotocol#readme",
+    "dependencies": {
+        "@atproto/api": "^0.13.5",
+        "@atproto/crypto": "^0.4.1",
+        "@atproto/jwk-jose": "^0.1.2",
+        "@atproto/oauth-client-node": "^0.1.0",
+        "express-session": "^1.18.0",
+        "node-jose": "^2.2.0",
+        "passport-strategy": "^1.0.0"
+    },
+    "devDependencies": {
+        "@atproto/oauth-types": "^0.1.4",
+        "@types/express": "^4.17.13",
+        "@types/express-serve-static-core": "^4.17.24",
+        "@types/jest": "^29.5.12",
+        "@types/lodash": "^4.14.172",
+        "@types/passport-strategy": "^0.2.35",
+        "@typescript-eslint/eslint-plugin": "^8.4.0",
+        "@typescript-eslint/parser": "^8.4.0",
+        "@ythub/eslint-config": "^1.1.0",
+        "eslint": "^8.0.0",
+        "express": "^4.17.1",
+        "jest": "^29.7.0",
+        "microbundle": "^0.13.3",
+        "prettier": "^3.3.3",
+        "ts-jest": "^29.2.5",
+        "typescript": "^4.4.3"
+    },
+    "peerDependencies": {
+        "express": "*",
+        "passport": "^0.7.0"
+    },
+    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}

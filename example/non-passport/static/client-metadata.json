@@ -1,0 +1,12 @@
+{
+    "client_id": "https://b6f0-2601-18f-27f-b590-2c31-b649-112a-116d.ngrok-free.app/client-metadata.json",
+    "client_name": "My First atproto OAuth App",
+    "client_uri": "https://b6f0-2601-18f-27f-b590-2c31-b649-112a-116d.ngrok-free.app",
+    "redirect_uris": ["https://b6f0-2601-18f-27f-b590-2c31-b649-112a-116d.ngrok-free.app/"],
+    "grant_types": ["authorization_code"],
+    "response_types": ["code"],
+    "scope": "atproto transition:generic",
+    "token_endpoint_auth_method": "none",
+    "application_type": "web",
+    "dpop_bound_access_tokens": true
+  }

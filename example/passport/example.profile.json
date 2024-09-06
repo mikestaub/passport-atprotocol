@@ -1,0 +1,122 @@
+{
+  "did": "did:plc:3ovlqkndffifdbmfblxnfymz",
+  "handle": "mikestaub.social",
+  "displayName": "Mike Staub 🐝",
+  "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:3ovlqkndffifdbmfblxnfymz/bafkreie42rpmcuhxom6mvasuq2bfxzmk2adgb2kir2uqthcxys54pkuv6e@jpeg",
+  "associated": {
+    "lists": 1,
+    "feedgens": 0,
+    "starterPacks": 0,
+    "labeler": false,
+    "chat": {
+      "allowIncoming": "following"
+    }
+  },
+  "viewer": {
+    "muted": false,
+    "blockedBy": false,
+    "knownFollowers": {
+      "count": 90,
+      "followers": [
+        {
+          "did": "did:plc:ragtjsm2j2vknwkz3zp4oxrd",
+          "handle": "pfrazee.com",
+          "displayName": "Paul Frazee",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:ragtjsm2j2vknwkz3zp4oxrd/bafkreihhpqdyntku66himwor5wlhtdo44hllmngj2ofmbqnm25bdm454wq@jpeg",
+          "associated": {
+            "chat": {
+              "allowIncoming": "following"
+            }
+          },
+          "viewer": {
+            "muted": false,
+            "blockedBy": false,
+            "following": "at://did:plc:3ovlqkndffifdbmfblxnfymz/app.bsky.graph.follow/3jssf2fjxtu2k",
+            "followedBy": "at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.graph.follow/3jnesc6iqou2m"
+          },
+          "labels": [],
+          "createdAt": "2022-11-17T00:35:16.391Z"
+        },
+        {
+          "did": "did:plc:oky5czdrnfjpqslsw2a5iclo",
+          "handle": "jay.bsky.team",
+          "displayName": "Jay 🦋",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:oky5czdrnfjpqslsw2a5iclo/bafkreihidru2xruxdxlvvcixc7lbgoudzicjbrdgacdhdhxyfw4yut4nfq@jpeg",
+          "associated": {
+            "chat": {
+              "allowIncoming": "following"
+            }
+          },
+          "viewer": {
+            "muted": false,
+            "blockedBy": false,
+            "following": "at://did:plc:3ovlqkndffifdbmfblxnfymz/app.bsky.graph.follow/3jneqllede22f",
+            "followedBy": "at://did:plc:oky5czdrnfjpqslsw2a5iclo/app.bsky.graph.follow/3jneqtsf5am2m"
+          },
+          "labels": [],
+          "createdAt": "2022-11-17T06:31:40.296Z"
+        },
+        {
+          "did": "did:plc:vpkhqolt662uhesyj6nxm7ys",
+          "handle": "why.bsky.team",
+          "displayName": "Uai",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:vpkhqolt662uhesyj6nxm7ys/bafkreietenc2aywhzxdyvalgffxl35tvxri6wv2iwryfdcdoecdfg553fy@jpeg",
+          "associated": {
+            "chat": {
+              "allowIncoming": "all"
+            }
+          },
+          "viewer": {
+            "muted": false,
+            "blockedBy": false,
+            "following": "at://did:plc:3ovlqkndffifdbmfblxnfymz/app.bsky.graph.follow/3jneqlmmpdu2m",
+            "followedBy": "at://did:plc:vpkhqolt662uhesyj6nxm7ys/app.bsky.graph.follow/3jnerdmtwgk2f"
+          },
+          "labels": [],
+          "createdAt": "2022-11-17T01:04:43.624Z"
+        },
+        {
+          "did": "did:plc:qlcbqt26tt6oje62tve2m7w6",
+          "handle": "vibes.bsky.social",
+          "displayName": "Vibes",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:qlcbqt26tt6oje62tve2m7w6/bafkreiapfs4nt6tvhpbv6ylqnqsfexu6bzoc53ypjtua4wgwoci7ufctfa@jpeg",
+          "viewer": {
+            "muted": false,
+            "blockedBy": false,
+            "following": "at://did:plc:3ovlqkndffifdbmfblxnfymz/app.bsky.graph.follow/3jnovdycmt223",
+            "followedBy": "at://did:plc:qlcbqt26tt6oje62tve2m7w6/app.bsky.graph.follow/3jnfz6mhcdg2f"
+          },
+          "labels": [],
+          "createdAt": "2023-01-28T01:32:31.921Z"
+        },
+        {
+          "did": "did:plc:tpg43qhh4lw4ksiffs4nbda3",
+          "handle": "jacob.gold",
+          "displayName": "Jake Gold",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:tpg43qhh4lw4ksiffs4nbda3/bafkreiems5id4gwiko7s3gffilosjowemvtse2p3uq6wrh62gogskp5vci@jpeg",
+          "associated": {
+            "chat": {
+              "allowIncoming": "all"
+            }
+          },
+          "viewer": {
+            "muted": false,
+            "blockedBy": false,
+            "following": "at://did:plc:3ovlqkndffifdbmfblxnfymz/app.bsky.graph.follow/3jsyrjj2pok2b",
+            "followedBy": "at://did:plc:tpg43qhh4lw4ksiffs4nbda3/app.bsky.graph.follow/3jt2u334ag42a"
+          },
+          "labels": [],
+          "createdAt": "2023-01-04T18:08:01.779Z"
+        }
+      ]
+    }
+  },
+  "labels": [],
+  "createdAt": "2023-01-28T16:40:07.280Z",
+  "description": "Developer, Artist, Investor, Entrepreneur, Truth Seeker, Athlete. \npeapods.com Founder, @peapods.bsky.social\n#Bitcoin",
+  "indexedAt": "2024-06-22T18:04:59.950Z",
+  "banner": "https://cdn.bsky.app/img/banner/plain/did:plc:3ovlqkndffifdbmfblxnfymz/bafkreib7c3ophmdgvyqkrs7dthjbdwr5iciizoyu3oe77we7qzkgbctn54@jpeg",
+  "followersCount": 382,
+  "followsCount": 438,
+  "postsCount": 532
+}

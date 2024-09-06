@@ -1,0 +1,21 @@
+{
+  "name": "passport-atprotocol-example",
+  "version": "0.1.0",
+  "description": "Example of using passport-atprotocol",
+  "scripts": {
+    "dev": "npx ts-node app.ts"
+  },
+  "dependencies": {
+    "@atproto/jwk-jose": "^0.1.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "passport": "^0.7.0",
+    "passport-atprotocol": "file:../.."
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
