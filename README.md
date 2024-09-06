@@ -1,6 +1,6 @@
 # passport-atprotocol
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mikestaub/passport-atprotocol/blob/main/LICENSE)  [![npm version](https://img.shields.io/npm/v/passport-atprotocol.svg?style=flat)](https://www.npmjs.com/package/passport-atprotocol)  [![Coverage Status](https://coveralls.io/repos/github/mikestaub/passport-atprotocol/badge.svg?branch=main)](https://coveralls.io/github/mikestaub/passport-atprotocol?branch=main) [![Discord](https://img.shields.io/discord/YOUR_SERVER_ID?style=flat&logo=discord&logoColor=white)](https://discord.gg/YOUR_INVITE_CODE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mikestaub/passport-atprotocol/blob/main/LICENSE)  [![npm version](https://img.shields.io/npm/v/passport-atprotocol.svg?style=flat)](https://www.npmjs.com/package/passport-atprotocol)  [![Coverage Status](https://coveralls.io/repos/github/mikestaub/passport-atprotocol/badge.svg?branch=main)](https://coveralls.io/github/mikestaub/passport-atprotocol?branch=main) [![Discord](https://img.shields.io/discord/1097580399187738645?style=flat&logo=discord&logoColor=white)](https://discord.gg/tCD8MMfq)
 
 ## WARNING: this library is currently in development and should not be used in production
 
