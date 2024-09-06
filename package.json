@@ -1,6 +1,6 @@
 {
     "name": "passport-atprotocol",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "ATprotocol (OAuth 2.0) authorization strategy for PassportJS",
     "author": "Mike Staub",
     "license": "MIT",
