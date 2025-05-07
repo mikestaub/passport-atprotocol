@@ -44,11 +44,11 @@
     },
     "homepage": "https://github.com/mikestaub/passport-atprotocol#readme",
     "dependencies": {
-        "@atproto/api": "^0.13.5",
-        "@atproto/crypto": "^0.4.1",
-        "@atproto/jwk-jose": "^0.1.2",
-        "@atproto/oauth-client-node": "^0.1.0",
-        "express-session": "^1.18.0",
+        "@atproto/api": "^0.15.6",
+        "@atproto/crypto": "^0.4.4",
+        "@atproto/jwk-jose": "^0.1.6",
+        "@atproto/oauth-client-node": "^0.2.17",
+        "express-session": "^1.18.1",
         "node-jose": "^2.2.0",
         "passport-strategy": "^1.0.0"
     },

@@ -162,27 +162,27 @@ describe('ATprotocolStrategy', () => {
       const mockNodeOAuthClient = NodeOAuthClient as jest.MockedClass<typeof NodeOAuthClient>;
       const options = mockNodeOAuthClient.mock.calls[0][0];
 
-      await options.sessionStore.set('testSub', {
+      await options.sessionStore.set('did:plc:testuser123', {
         dpopJwk: { kty: 'EC', crv: 'P-256' },
         tokenSet: {
           iss: 'https://example.com',
-          sub: 'testSub',
+          sub: 'did:plc:testuser123',
           aud: 'client123',
-          scope: 'read write',
+          scope: 'atproto transition:generic',
           access_token: 'test-access-token',
-          token_type: 'Bearer',
+          token_type: 'DPoP',
         },
       });
 
-      expect(options.sessionStore.get('testSub')).resolves.toEqual({
+      expect(options.sessionStore.get('did:plc:testuser123')).resolves.toEqual({
         dpopJwk: { kty: 'EC', crv: 'P-256' },
         tokenSet: {
           iss: 'https://example.com',
-          sub: 'testSub',
+          sub: 'did:plc:testuser123',
           aud: 'client123',
-          scope: 'read write',
+          scope: 'atproto transition:generic',
           access_token: 'test-access-token',
-          token_type: 'Bearer',
+          token_type: 'DPoP',
         },
       });
     });
@@ -192,19 +192,19 @@ describe('ATprotocolStrategy', () => {
       const mockNodeOAuthClient = NodeOAuthClient as jest.MockedClass<typeof NodeOAuthClient>;
       const options = mockNodeOAuthClient.mock.calls[0][0];
 
-      await options.sessionStore.set('testSub', {
+      await options.sessionStore.set('did:plc:testuser123', {
         dpopJwk: { kty: 'EC', crv: 'P-256' },
         tokenSet: {
           iss: 'https://example.com',
-          sub: 'testSub',
+          sub: 'did:plc:testuser123',
           aud: 'client123',
-          scope: 'read write',
+          scope: 'atproto transition:generic',
           access_token: 'test-access-token',
-          token_type: 'Bearer',
+          token_type: 'DPoP',
         },
       });
-      await options.sessionStore.del('testSub');
-      expect(options.sessionStore.get('testSub')).resolves.toBeUndefined();
+      await options.sessionStore.del('did:plc:testuser123');
+      expect(options.sessionStore.get('did:plc:testuser123')).resolves.toBeUndefined();
     });
   });
 
@@ -224,25 +224,24 @@ describe('ATprotocolStrategy', () => {
     it('should refresh the access token', async () => {
       const mockSession = {
         profile: mockProfile,
-      };
-      const mockTokenSet = {
-        access_token: 'new-access-token',
-        refresh_token: 'new-refresh-token',
-        expires_at: 1234567890,
+        accessToken: 'existing-access-token',
+        refreshToken: 'existing-refresh-token',
+        tokenExpiry: '2025-01-01T00:00:00.000Z',
       };
 
-      mockOAuthClient.restore.mockResolvedValue({
-        getTokenSet: jest.fn().mockResolvedValue(mockTokenSet),
-      });
-
+      const originalDateNow = Date.now;
+      Date.now = jest.fn(() => 1746639576116); // May 7, 2025 17:39:36.116Z
+      
       const result = await strategy.refreshAccessToken(mockSession);
 
       expect(result).toEqual({
         ...mockSession,
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-        tokenExpiry: 1234567890,
+        accessToken: 'existing-access-token',
+        refreshToken: 'existing-refresh-token',
+        tokenExpiry: '2025-05-07T18:39:36.116Z', // 1 hour from mocked Date.now()
       });
+      
+      Date.now = originalDateNow;
     });
   });
 

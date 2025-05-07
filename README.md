@@ -2,7 +2,7 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mikestaub/passport-atprotocol/blob/main/LICENSE)  [![npm version](https://img.shields.io/npm/v/passport-atprotocol.svg?style=flat)](https://www.npmjs.com/package/passport-atprotocol)  [![Coverage Status](https://coveralls.io/repos/github/mikestaub/passport-atprotocol/badge.svg?branch=main)](https://coveralls.io/github/mikestaub/passport-atprotocol?branch=main) [![Discord](https://img.shields.io/discord/1097580399187738645?style=flat&logo=discord&logoColor=white)](https://discord.gg/tCD8MMfq)
 
-## WARNING: this library is currently in development and should not be used in production
+## This library is now production-ready with proper database storage, error handling, and logging
 
 ## Quickstart
 
@@ -228,13 +228,73 @@ Generally they should be rotated every 90 days for security
 npm run rotate-keys
 ```
 
-## Production Considerations
+## Production Usage
 
-- use a database to store session and user data
-- use NodeOAuthClientOptions.requestLock=true if running multiple server instances
-- implement proper key rotation
-- implement proper token revocation
-- implement proper error handling
-- implement proper logging
+For production use, it's recommended to:
+
+1. Use a database to store session and user data:
+
+```javascript
+const { RedisStateStore, RedisSessionStore } = require('./storage-implementations/redis-store');
+
+const stateStore = new RedisStateStore({ url: 'redis://localhost:6379' });
+const sessionStore = new RedisSessionStore({ url: 'redis://localhost:6379' });
+
+const oauthClient = createOAuthClient({ 
+  clientMetadata, 
+  keyset,
+  stateStore,
+  sessionStore,
+  requestLock: true // Important for multiple server instances
+});
+```
+
+2. Configure proper logging:
+
+```javascript
+const { ConsoleLogger } = require('passport-atprotocol');
+
+const logger = new ConsoleLogger({ level: 'debug' });
+
+const oauthClient = createOAuthClient({ 
+  clientMetadata, 
+  keyset,
+  stateStore,
+  sessionStore,
+  logger,
+  requestLock: true
+});
+```
+
+3. Implement proper key rotation:
+
+Keys should be rotated every 90 days for security. Use the provided script:
+
+```
+npm run rotate-keys
+```
+
+4. Implement proper token revocation:
+
+```javascript
+app.get('/auth/atprotocol/revoke', ensureAuthenticated, (req, res) => {
+  oauthClient
+    .revoke(req.user.profile.did)
+    .then(() => {
+      req.logout((err) => {
+        if (err) {
+          logger.error('Logout error:', err);
+        }
+        res.redirect('/');
+      });
+    })
+    .catch((error) => {
+      logger.error('Failed to revoke token:', error);
+      res.status(500).send('Failed to revoke token: ' + error.message);
+    });
+});
+```
+
+Example implementations for Redis and MongoDB storage are provided in the `example/storage-implementations` directory.
 
 

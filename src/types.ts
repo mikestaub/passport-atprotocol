@@ -3,10 +3,19 @@ import { Session } from 'express-session';
 import { NodeOAuthClient, ClientMetadata, AuthorizeOptions } from '@atproto/oauth-client-node';
 import { AppBskyActorDefs } from '@atproto/api';
 import { JoseKey } from '@atproto/jwk-jose';
+import { StateStore, SessionStore } from './storage';
+import { Logger, ConsoleLogger } from './logger';
+
+export { StateStore, SessionStore };
+export { Logger, ConsoleLogger };
 
 export interface ATprotocolOptions {
   clientMetadata: ClientMetadata;
   keyset: JoseKey[];
+  stateStore?: StateStore;
+  sessionStore?: SessionStore;
+  logger?: Logger;
+  requestLock?: any | null;
 }
 
 export interface ExpressRequestWithSession extends Request {
@@ -16,6 +25,7 @@ export interface ExpressRequestWithSession extends Request {
 export interface ATprotocolStrategyOptions {
   oauthClient: NodeOAuthClient;
   passReqToCallback?: boolean;
+  logger?: Logger;
 }
 
 export type CreateLoginMiddlewareParams = {
