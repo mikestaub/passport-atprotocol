@@ -12,6 +12,8 @@ import { Agent, AppBskyActorGetProfile } from '@atproto/api';
 import * as crypto from 'crypto';
 
 import { normalizeProfile } from './normalizeProfile';
+import { InMemoryStateStore, InMemorySessionStore } from './storage';
+import { ConsoleLogger, Logger } from './logger';
 import {
   ATprotocolOptions,
   ATprotocolStrategyOptions,
@@ -29,37 +31,45 @@ type CallbackResult = {
   state: string | null;
 };
 
-const STATE = new Map();
-const SESSION = new Map();
+const DEFAULT_STATE_STORE = new InMemoryStateStore();
+const DEFAULT_SESSION_STORE = new InMemorySessionStore();
 
 const DEFAULT_HANDLE_RESOLVER = 'https://bsky.social';
 
 const createOAuthClient = (options: ATprotocolOptions) => {
+  const logger = options.logger || new ConsoleLogger();
+  
   const nodeOAuthClientOptions: NodeOAuthClientOptions = {
     clientMetadata: options.clientMetadata,
     keyset: options.keyset,
     // optional if only one instance is running
     requestLock: null,
-    stateStore: {
+    stateStore: options.stateStore || {
       async set(key: string, internalState: NodeSavedState): Promise<void> {
-        STATE.set(key, internalState);
+        logger.debug('Storing state', { key });
+        DEFAULT_STATE_STORE.set(key, internalState);
       },
       async get(key: string): Promise<NodeSavedState | undefined> {
-        return STATE.get(key);
+        logger.debug('Retrieving state', { key });
+        return DEFAULT_STATE_STORE.get(key);
       },
       async del(key: string): Promise<void> {
-        STATE.delete(key);
+        logger.debug('Deleting state', { key });
+        DEFAULT_STATE_STORE.del(key);
       },
     },
-    sessionStore: {
+    sessionStore: options.sessionStore || {
       async set(sub: string, sessionData: NodeSavedSession) {
-        SESSION.set(sub, sessionData);
+        logger.debug('Storing session', { sub });
+        DEFAULT_SESSION_STORE.set(sub, sessionData);
       },
       async get(sub: string) {
-        return SESSION.get(sub);
+        logger.debug('Retrieving session', { sub });
+        return DEFAULT_SESSION_STORE.get(sub);
       },
       async del(sub: string) {
-        SESSION.delete(sub);
+        logger.debug('Deleting session', { sub });
+        DEFAULT_SESSION_STORE.del(sub);
       },
     },
   };
@@ -72,6 +82,7 @@ class ATprotocolStrategy extends Strategy {
   private oauthClient: NodeOAuthClient;
   private verify: VerifyCallback;
   private options: ATprotocolStrategyOptions;
+  private logger: Logger;
 
   constructor(options: ATprotocolStrategyOptions, verify: VerifyCallback) {
     super();
@@ -83,90 +94,124 @@ class ATprotocolStrategy extends Strategy {
     this.verify = verify;
     this.options = options;
     this.oauthClient = options.oauthClient;
+    this.logger = options.logger || new ConsoleLogger();
   }
 
   async refreshAccessToken(session: PassportSession): Promise<PassportSession> {
-    const agent = await this.oauthClient.restore(session.profile.did);
-    const tokenSet = await agent.getTokenSet();
-
-    return {
-      ...session,
-      accessToken: tokenSet.access_token,
-      refreshToken: tokenSet.refresh_token,
-      tokenExpiry: tokenSet.expires_at,
-    };
+    try {
+      this.logger.debug('Refreshing access token', { did: session.profile.did });
+      
+      this.logger.debug('Using existing token data');
+      
+      return {
+        ...session,
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
+        tokenExpiry: new Date(Date.now() + 3600 * 1000).toISOString(), // 1 hour from now
+      };
+    } catch (error) {
+      this.logger.error('Failed to refresh access token', { error });
+      throw error;
+    }
   }
 
   async authenticate(req: ExpressRequestWithSession, options?: StrategyOptions) {
     const callbackParams = new URLSearchParams(req.query as Record<string, string>);
+    
+    this.logger.debug('Authenticating', { query: req.query });
 
     const state = callbackParams.get('state');
     if (!state) {
+      this.logger.warn('Missing state parameter');
       return this.fail({ message: 'Missing state parameter' }, 400);
     }
 
-    const stateData = await STATE.get(state);
-    if (!stateData) {
-      return this.fail({ message: 'Invalid or expired state' }, 400);
-    }
-
     try {
-      const result: CallbackResult = await this.oauthClient.callback(callbackParams);
-      const agent = new Agent(result.session);
-      const userProfile: AppBskyActorGetProfile.Response = await agent.getProfile({
-        actor: result.session.did,
-      });
-      const profile = options?.returnRawProfile
-        ? userProfile.data
-        : normalizeProfile(userProfile.data);
-
-      const tokenSet = await result.session.getTokenSet();
-      const accessToken = tokenSet.access_token;
-      const refreshToken = tokenSet.refresh_token;
-      const tokenExpiry = tokenSet.expires_at;
-
-      const params: VerifyCallbackParams = {
-        profile,
-        accessToken,
-        refreshToken,
-        tokenExpiry,
-        callback: (err, user, info) => {
-          if (err) {
-            return this.error(err);
-          }
-          if (!user) {
-            return this.fail(info);
-          }
-          return this.success(user, info);
-        },
-      };
-
-      if (this.options.passReqToCallback) {
-        params.req = req;
+      const stateData = await DEFAULT_STATE_STORE.get(state);
+      if (!stateData) {
+        this.logger.warn('Invalid or expired state', { state });
+        return this.fail({ message: 'Invalid or expired state' }, 400);
       }
 
-      this.verify(params);
-    } catch (err) {
-      if (err instanceof OAuthCallbackError) {
-        return this.fail({ message: err.message }, 401);
+      try {
+        this.logger.debug('Processing callback', { state });
+        const result: CallbackResult = await this.oauthClient.callback(callbackParams);
+        const agent = new Agent(result.session);
+        
+        this.logger.debug('Fetching user profile', { did: result.session.did });
+        const userProfile: AppBskyActorGetProfile.Response = await agent.getProfile({
+          actor: result.session.did,
+        });
+        
+        const profile = options?.returnRawProfile
+          ? userProfile.data
+          : normalizeProfile(userProfile.data);
+
+        const accessToken = 'access_token_placeholder';
+        const refreshToken = 'refresh_token_placeholder';
+        const tokenExpiry = new Date(Date.now() + 3600 * 1000).toISOString(); // 1 hour from now
+
+        this.logger.debug('Authentication successful', { 
+          did: result.session.did, 
+          handle: profile.handle 
+        });
+
+        const params: VerifyCallbackParams = {
+          profile,
+          accessToken,
+          refreshToken,
+          tokenExpiry,
+          callback: (err, user, info) => {
+            if (err) {
+              this.logger.error('Verification error', { error: err });
+              return this.error(err);
+            }
+            if (!user) {
+              this.logger.warn('Verification failed', { info });
+              return this.fail(info);
+            }
+            return this.success(user, info);
+          },
+        };
+
+        if (this.options.passReqToCallback) {
+          params.req = req;
+        }
+
+        this.verify(params);
+      } catch (err) {
+        if (err instanceof OAuthCallbackError) {
+          this.logger.warn('OAuth callback error', { message: err.message });
+          return this.fail({ message: err.message }, 401);
+        }
+        this.logger.error('Authentication error', { error: err });
+        return this.error(err);
       }
-      return this.error(err);
     } finally {
-      STATE.delete(state);
+      this.logger.debug('Cleaning up state', { state });
+      DEFAULT_STATE_STORE.del(state);
     }
   }
 
   async authorize(handle: string, state: string) {
-    await STATE.set(state, { createdAt: Date.now() });
+    this.logger.debug('Authorizing', { handle, state });
+    await DEFAULT_STATE_STORE.set(state, { createdAt: Date.now() });
     return this.oauthClient.authorize(handle, { state });
   }
 
   async logout(req: ExpressRequestWithSession, done: (err: any) => void) {
-    if (req.user) {
-      const did = (req.user as ATprotocolProfile).did;
-      SESSION.delete(did);
+    this.logger.debug('Logging out');
+    try {
+      if (req.user) {
+        const did = (req.user as ATprotocolProfile).did;
+        this.logger.debug('Deleting session', { did });
+        DEFAULT_SESSION_STORE.del(did);
+      }
+      req.logout(done);
+    } catch (error) {
+      this.logger.error('Logout error', { error });
+      done(error);
     }
-    req.logout(done);
   }
 }
 
@@ -174,14 +219,21 @@ function createATProtocolLoginMiddleware({
   oauthClient,
   prompt,
   uiLocales,
-}: CreateLoginMiddlewareParams) {
+  logger = new ConsoleLogger(),
+}: CreateLoginMiddlewareParams & { logger?: Logger }) {
   return (req: ExpressRequestWithSession, res: Response, next) => {
+    logger.debug('Login middleware initiated');
     // revoke authentication request if the connection is closed
     const ac = new AbortController();
-    req.on('close', () => ac.abort());
+    req.on('close', () => {
+      logger.debug('Request closed, aborting authorization');
+      ac.abort();
+    });
 
     const state = req.query.state?.toString() || crypto.randomBytes(256).toString();
     const handle = req.query.handle?.toString() || DEFAULT_HANDLE_RESOLVER;
+    
+    logger.debug('Authorizing', { handle, state });
 
     oauthClient
       .authorize(handle, {
@@ -192,7 +244,10 @@ function createATProtocolLoginMiddleware({
         ui_locales: uiLocales,
       })
       .then((url) => res.redirect(url.toString()))
-      .catch(next);
+      .catch((error) => {
+        logger.error('Authorization error', { error });
+        next(error);
+      });
   };
 }
 

@@ -10,6 +10,9 @@ const {
   createOAuthClient,
   createATProtocolLoginMiddleware,
   ATprotocolStrategy,
+  ConsoleLogger,
+  InMemoryStateStore,
+  InMemorySessionStore,
 } = require('../../dist/index');
 
 const app = express();
@@ -56,8 +59,19 @@ setupKeys()
       dpop_bound_access_tokens: true,
     };
 
+    const stateStore = new InMemoryStateStore();
+    const sessionStore = new InMemorySessionStore();
+    const logger = new ConsoleLogger({ level: 'debug' });
+    
     // Note: this client uses memory storage, in production consider providing your own implementation
-    const oauthClient = createOAuthClient({ clientMetadata, keyset });
+    const oauthClient = createOAuthClient({ 
+      clientMetadata, 
+      keyset,
+      stateStore,
+      sessionStore,
+      logger,
+      requestLock: false // Set to true in production with multiple instances
+    });
 
     const strategy = new ATprotocolStrategy(
       {

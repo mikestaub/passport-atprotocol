@@ -22,32 +22,43 @@ function generateECKey(kid) {
 }
 
 function rotateKeys() {
-  // Load existing keys from .env file
-  dotenv.config();
-  const existingKeys = {
-    PRIVATE_KEY_1: JSON.parse(process.env.PRIVATE_KEY_1),
-    PRIVATE_KEY_2: JSON.parse(process.env.PRIVATE_KEY_2),
-    PRIVATE_KEY_3: JSON.parse(process.env.PRIVATE_KEY_3),
-  };
+  try {
+    // Load existing keys from .env file
+    dotenv.config();
+    const existingKeys = {
+      PRIVATE_KEY_1: JSON.parse(process.env.PRIVATE_KEY_1),
+      PRIVATE_KEY_2: JSON.parse(process.env.PRIVATE_KEY_2),
+      PRIVATE_KEY_3: JSON.parse(process.env.PRIVATE_KEY_3),
+    };
+    
+    console.log('Current keys loaded successfully');
 
-  // Generate a new key
-  const newKey = generateECKey(`key-${Date.now()}`);
+    // Generate a new key with timestamp-based kid for better tracking
+    const timestamp = Date.now();
+    const newKey = generateECKey(`key-${timestamp}`);
+    console.log(`Generated new key with id: key-${timestamp}`);
 
-  // Rotate keys
-  const rotatedKeys = {
-    PRIVATE_KEY_1: existingKeys.PRIVATE_KEY_2,
-    PRIVATE_KEY_2: existingKeys.PRIVATE_KEY_3,
-    PRIVATE_KEY_3: newKey,
-  };
+    // Rotate keys
+    const rotatedKeys = {
+      PRIVATE_KEY_1: existingKeys.PRIVATE_KEY_2,
+      PRIVATE_KEY_2: existingKeys.PRIVATE_KEY_3,
+      PRIVATE_KEY_3: newKey,
+    };
+    
+    console.log('Keys rotated: PRIVATE_KEY_3 -> PRIVATE_KEY_2 -> PRIVATE_KEY_1 -> discarded');
 
-  // Save the rotated keys to .env file
-  const envContent = Object.entries(rotatedKeys)
-    .map(([key, value]) => `${key}='${JSON.stringify(value)}'`)
-    .join('\n');
+    // Save the rotated keys to .env file
+    const envContent = Object.entries(rotatedKeys)
+      .map(([key, value]) => `${key}='${JSON.stringify(value)}'`)
+      .join('\n');
 
-  fs.writeFileSync('.env', envContent);
 
-  console.log('Keys rotated and saved to .env file');
+    fs.writeFileSync('.env', envContent);
+    console.log('Keys rotated and saved to .env file');
+  } catch (error) {
+    console.error('Error rotating keys:', error);
+    process.exit(1);
+  }
 }
 
 rotateKeys();
